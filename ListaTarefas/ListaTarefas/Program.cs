@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using ListaTarefas.DAL;
 using ListaTarefas.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<TarefasService>();
+
+string connectionString = "Server=.\\SQLExpress;Database=TarefasAPI;Trusted_Connection=True;";
+
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+
 
 var app = builder.Build();
 
