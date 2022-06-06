@@ -1,4 +1,6 @@
-﻿using ListaTarefas.Domain.Entity;
+﻿using Microsoft.EntityFrameworkCore;
+using ListaTarefas.DAL;
+using ListaTarefas.Domain.Entity;
 using ListaTarefas.Services.Base;
 using ListaTarefas.Domain.DTO;
 using System;
@@ -10,42 +12,21 @@ namespace ListaTarefas.Services
 {
     public class TarefasService
     {
-        private static List<Tarefa> listaDeTarefas;
-        private static int proximoId = 1;
 
-        public TarefasService()
+        private readonly AppDbContext _dbContext;
+        public TarefasService(AppDbContext dbContext)
         {
-            if (listaDeTarefas == null)
-            {
-                listaDeTarefas = new List<Tarefa>();
-
-                listaDeTarefas.Add(new Tarefa()
-                {
-                    IdTarefa = proximoId++,
-                    Titulo = "Beber água",
-                    Descricao = "Importante se hidratar",
-                    Concluido = false,
-                    Prioridade = 2
-                });
-                listaDeTarefas.Add(new Tarefa()
-                {
-                    IdTarefa = proximoId++,
-                    Titulo = "Estudar DevOps",
-                    Descricao = "Fazer cursos de AWS, Azure e Imersão na Alura",
-                    Concluido = false,
-                    Prioridade = 5
-                });
-            }
+            _dbContext = dbContext;
         }
 
         public List<Tarefa> ListarTodos()
         {
-            return listaDeTarefas;
+            return _dbContext.Tarefas.ToList();
         }
 
         public ServiceResponse<Tarefa> PesquisarPorId(int id)
         {
-            var resultado = listaDeTarefas.Where(tarefa => tarefa.IdTarefa == id).FirstOrDefault();
+            var resultado = _dbContext.Tarefas.Where(tarefa => tarefa.IdTarefa == id).FirstOrDefault();
 
             if (resultado != null)
             {
@@ -66,27 +47,31 @@ namespace ListaTarefas.Services
 
             var novaTarefa = new Tarefa()
             {
-                IdTarefa = proximoId++,
                 Titulo = model.Titulo,
                 Descricao = model.Descricao,
                 Prioridade = model.Prioridade,
                 Concluido = false
             };
 
-            listaDeTarefas.Add(novaTarefa);
+            _dbContext.Add(novaTarefa);
+            _dbContext.SaveChanges();
 
             return new ServiceResponse<Tarefa>(novaTarefa);
         }
 
         public ServiceResponse<Tarefa> EditarConcluido(int id, ConcluidoUpdateRequest model)
         {
-            var resultado = listaDeTarefas.Where(tarefa => tarefa.IdTarefa == id).FirstOrDefault();
+            var resultado = _dbContext.Tarefas.Where(tarefa => tarefa.IdTarefa == id).FirstOrDefault();
 
             if (resultado != null)
             {
                 resultado.Concluido = model.Concluido;
+
+                _dbContext.Tarefas.Add(resultado).State = EntityState.Modified;
+                _dbContext.SaveChanges();
+
                 return new ServiceResponse<Tarefa>(resultado);
-            } 
+            }
             else
             {
                 return new ServiceResponse<Tarefa>("Tarefa não encontrada!");
@@ -94,17 +79,21 @@ namespace ListaTarefas.Services
         }
 
         public ServiceResponse<Tarefa> EditarPrioridade(int id, PrioridadeUpdateRequest model)
-        {   
+        {
             if (model.Prioridade == null)
             {
                 return new ServiceResponse<Tarefa>("Valor não pode ser null");
             }
 
-            var resultado = listaDeTarefas.Where(tarefa => tarefa.IdTarefa == id).FirstOrDefault();
+            var resultado = _dbContext.Tarefas.Where(tarefa => tarefa.IdTarefa == id).FirstOrDefault();
 
             if (resultado != null)
             {
                 resultado.Prioridade = model.Prioridade;
+
+                _dbContext.Tarefas.Add(resultado).State = EntityState.Modified;
+                _dbContext.SaveChanges();
+
                 return new ServiceResponse<Tarefa>(resultado);
             }
             else
@@ -115,16 +104,18 @@ namespace ListaTarefas.Services
 
         public ServiceResponse<bool> Deletar(int id)
         {
-            var resultado = listaDeTarefas.Where(tarefa => tarefa.IdTarefa == id).FirstOrDefault();
+            var resultado = _dbContext.Tarefas.Where(tarefa => tarefa.IdTarefa == id).FirstOrDefault();
 
             if (resultado == null)
             {
                 return new ServiceResponse<bool>("Tarefa não encontrada!");
             }
-           
-            listaDeTarefas.Remove(resultado);
+
+            _dbContext.Tarefas.Remove(resultado);
+            _dbContext.SaveChanges();
+
             return new ServiceResponse<bool>(true);
-            
+
         }
     }
 }
