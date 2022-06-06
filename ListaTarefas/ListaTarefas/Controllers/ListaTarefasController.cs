@@ -26,5 +26,20 @@ namespace ListaTarefas.Controllers
             return _tarefasService.ListarTodos();
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+            var retorno = _tarefasService.PesquisarPorId(id);
+
+            if (retorno.Sucesso == true)
+            {
+                return Ok(retorno.ObjetoRetorno);
+            }
+            else
+            {
+                return NotFound(retorno.Mensagem);
+            }
+        }
+
     }
 }

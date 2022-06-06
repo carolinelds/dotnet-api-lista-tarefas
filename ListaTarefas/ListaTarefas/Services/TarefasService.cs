@@ -41,5 +41,19 @@ namespace ListaTarefas.Services
         {
             return listaDeTarefas;
         }
+
+        public ServiceResponse<Tarefa> PesquisarPorId(int id)
+        {
+            var resultado = listaDeTarefas.Where(tarefa => tarefa.IdTarefa == id).FirstOrDefault();
+
+            if (resultado != null)
+            {
+                return new ServiceResponse<Tarefa>(resultado);
+            }
+            else
+            {
+                return new ServiceResponse<Tarefa>("Tarefa não encontrada!");
+            }
+        }
     }
 }
