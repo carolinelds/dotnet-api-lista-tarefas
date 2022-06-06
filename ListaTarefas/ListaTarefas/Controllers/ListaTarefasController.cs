@@ -63,5 +63,24 @@ namespace ListaTarefas.Controllers
             }
         }
 
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, [FromBody] TarefaUpdateRequest putModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var retorno = _tarefasService.Editar(id, putModel);
+                if (retorno.Sucesso != true)
+                {
+                    return BadRequest(retorno.Mensagem);
+                }
+                return Ok(retorno.ObjetoRetorno);
+
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
     }
 }

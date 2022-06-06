@@ -57,25 +57,40 @@ namespace ListaTarefas.Services
             }
         }
 
-        public ServiceResponse<Tarefa> CadastrarNova(TarefaCreateRequest tarefa)
+        public ServiceResponse<Tarefa> CadastrarNova(TarefaCreateRequest model)
         {
-            if (!tarefa.Prioridade.HasValue)
+            if (!model.Prioridade.HasValue)
             {
-                tarefa.Prioridade = 5;
+                model.Prioridade = 5;
             }
 
             var novaTarefa = new Tarefa()
             {
                 IdTarefa = proximoId++,
-                Titulo = tarefa.Titulo,
-                Descricao = tarefa.Descricao,
-                Prioridade = tarefa.Prioridade,
+                Titulo = model.Titulo,
+                Descricao = model.Descricao,
+                Prioridade = model.Prioridade,
                 Concluido = false
             };
 
             listaDeTarefas.Add(novaTarefa);
 
             return new ServiceResponse<Tarefa>(novaTarefa);
+        }
+
+        public ServiceResponse<Tarefa> Editar(int id, TarefaUpdateRequest model)
+        {
+            var resultado = listaDeTarefas.Where(tarefa => tarefa.IdTarefa == id).FirstOrDefault();
+
+            if (resultado != null)
+            {
+                resultado.Concluido = model.Concluido;
+                return new ServiceResponse<Tarefa>(resultado);
+            } 
+            else
+            {
+                return new ServiceResponse<Tarefa>("Tarefa não encontrada!");
+            }
         }
     }
 }
