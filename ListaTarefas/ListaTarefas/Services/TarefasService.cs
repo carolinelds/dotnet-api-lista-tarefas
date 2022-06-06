@@ -78,7 +78,7 @@ namespace ListaTarefas.Services
             return new ServiceResponse<Tarefa>(novaTarefa);
         }
 
-        public ServiceResponse<Tarefa> Editar(int id, TarefaUpdateRequest model)
+        public ServiceResponse<Tarefa> EditarConcluido(int id, ConcluidoUpdateRequest model)
         {
             var resultado = listaDeTarefas.Where(tarefa => tarefa.IdTarefa == id).FirstOrDefault();
 
@@ -87,6 +87,26 @@ namespace ListaTarefas.Services
                 resultado.Concluido = model.Concluido;
                 return new ServiceResponse<Tarefa>(resultado);
             } 
+            else
+            {
+                return new ServiceResponse<Tarefa>("Tarefa não encontrada!");
+            }
+        }
+
+        public ServiceResponse<Tarefa> EditarPrioridade(int id, PrioridadeUpdateRequest model)
+        {   
+            if (model.Prioridade == null)
+            {
+                return new ServiceResponse<Tarefa>("Valor não pode ser null");
+            }
+
+            var resultado = listaDeTarefas.Where(tarefa => tarefa.IdTarefa == id).FirstOrDefault();
+
+            if (resultado != null)
+            {
+                resultado.Prioridade = model.Prioridade;
+                return new ServiceResponse<Tarefa>(resultado);
+            }
             else
             {
                 return new ServiceResponse<Tarefa>("Tarefa não encontrada!");

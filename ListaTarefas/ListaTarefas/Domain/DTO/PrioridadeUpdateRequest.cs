@@ -6,10 +6,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ListaTarefas.Domain.DTO
 {
-    public class TarefaUpdateRequest
+    public class PrioridadeUpdateRequest
     {
         [Required]
-        [Range(typeof(bool), "false", "true")]
-        public bool Concluido { get; set;}
+        [Range(1,5)]
+        public int? Prioridade { get; set; }
     }
 }

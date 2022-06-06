@@ -63,18 +63,36 @@ namespace ListaTarefas.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] TarefaUpdateRequest putModel)
+        [HttpPut("Done/{id}")]
+        public IActionResult Put(int id, [FromBody] ConcluidoUpdateRequest putModel)
         {
             if (ModelState.IsValid)
             {
-                var retorno = _tarefasService.Editar(id, putModel);
+                var retorno = _tarefasService.EditarConcluido(id, putModel);
                 if (retorno.Sucesso != true)
                 {
                     return BadRequest(retorno.Mensagem);
                 }
                 return Ok(retorno.ObjetoRetorno);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
 
+        [HttpPut("Priority/{id}")]
+        public IActionResult Put(int id, [FromBody] PrioridadeUpdateRequest putModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var retorno = _tarefasService.EditarPrioridade(id, putModel);
+
+                if (retorno.Sucesso != true)
+                {
+                    return BadRequest(retorno.Mensagem);
+                }
+                return Ok(retorno.ObjetoRetorno);
             }
             else
             {
