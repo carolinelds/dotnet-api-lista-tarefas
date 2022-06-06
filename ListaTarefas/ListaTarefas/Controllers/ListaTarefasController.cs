@@ -100,5 +100,17 @@ namespace ListaTarefas.Controllers
             }
         }
 
+        [HttpDelete]
+        public IActionResult Delete(int id)
+        {
+            var retorno = _tarefasService.Deletar(id);
+
+            if (retorno.Sucesso != true)
+            {
+                return BadRequest(retorno.Mensagem);
+            }
+            return Ok(retorno.ObjetoRetorno);
+        }
+
     }
 }

@@ -112,5 +112,19 @@ namespace ListaTarefas.Services
                 return new ServiceResponse<Tarefa>("Tarefa não encontrada!");
             }
         }
+
+        public ServiceResponse<bool> Deletar(int id)
+        {
+            var resultado = listaDeTarefas.Where(tarefa => tarefa.IdTarefa == id).FirstOrDefault();
+
+            if (resultado == null)
+            {
+                return new ServiceResponse<bool>("Tarefa não encontrada!");
+            }
+           
+            listaDeTarefas.Remove(resultado);
+            return new ServiceResponse<bool>(true);
+            
+        }
     }
 }
