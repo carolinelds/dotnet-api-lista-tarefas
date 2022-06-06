@@ -1,5 +1,6 @@
 ﻿using ListaTarefas.Domain.Entity;
 using ListaTarefas.Services.Base;
+using ListaTarefas.Domain.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,6 +55,27 @@ namespace ListaTarefas.Services
             {
                 return new ServiceResponse<Tarefa>("Tarefa não encontrada!");
             }
+        }
+
+        public ServiceResponse<Tarefa> CadastrarNova(TarefaCreateRequest tarefa)
+        {
+            if (!tarefa.Prioridade.HasValue)
+            {
+                tarefa.Prioridade = 5;
+            }
+
+            var novaTarefa = new Tarefa()
+            {
+                IdTarefa = proximoId++,
+                Titulo = tarefa.Titulo,
+                Descricao = tarefa.Descricao,
+                Prioridade = tarefa.Prioridade,
+                Concluido = false
+            };
+
+            listaDeTarefas.Add(novaTarefa);
+
+            return new ServiceResponse<Tarefa>(novaTarefa);
         }
     }
 }

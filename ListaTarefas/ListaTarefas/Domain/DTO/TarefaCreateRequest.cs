@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
-namespace ListaTarefas.Domain.Entity
+namespace ListaTarefas.Domain.DTO
 {
-    public class Tarefa
+    public class TarefaCreateRequest
     {
-        public int IdTarefa { get; set; }
+        [Required(ErrorMessage = "Título é obrigatório")]
         public string Titulo { get; set; }
+
         public string Descricao { get; set; }
-        public bool Concluido { get; set; }
+
+        [Range(1,5)]
         public int? Prioridade { get; set; }
     }
 }

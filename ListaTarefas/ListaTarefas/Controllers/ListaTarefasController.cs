@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using ListaTarefas.Domain.Entity;
 using ListaTarefas.Services;
+using ListaTarefas.Domain.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +39,27 @@ namespace ListaTarefas.Controllers
             else
             {
                 return NotFound(retorno.Mensagem);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Post([FromBody] TarefaCreateRequest postModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var retorno = _tarefasService.CadastrarNova(postModel);
+                if (retorno.Sucesso == true)
+                {
+                    return Ok(retorno.ObjetoRetorno);
+                }
+                else
+                {
+                    return BadRequest(retorno.Mensagem);
+                }
+            } 
+            else
+            {
+                return BadRequest(ModelState);
             }
         }
 
