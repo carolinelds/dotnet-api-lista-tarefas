@@ -130,6 +130,39 @@ namespace ListaTarefas.Tests.Services
             Assert.Equal(retorno.Mensagem, mensagemEsperada);
         }
 
+        [Fact]
+        public void Quando_ChamadoEditarPrioridade_Com_IdExistente_Deve_RetornarTarefaEditada()
+        {
+            var lista = ListaTarefasStub();
+
+            var request = new PrioridadeUpdateRequest()
+            {
+                Prioridade = 1
+            };
+
+            var retorno = _service.EditarPrioridade(lista[0].IdTarefa, request);
+
+            Assert.Equal(retorno.ObjetoRetorno.Prioridade, request.Prioridade);
+        }
+
+        [Fact]
+        public void Quando_ChamadoEditarPrioridade_Com_IdNaoExistente_Deve_RetornarErro()
+        {
+            var lista = ListaTarefasStub();
+
+            var mensagemEsperada = "Tarefa não encontrada!";
+
+            var request = new PrioridadeUpdateRequest()
+            {
+                Prioridade = 1
+            };
+
+            var retorno = _service.EditarPrioridade(lista.Count + 1, request);
+
+            Assert.False(retorno.Sucesso);
+            Assert.Equal(retorno.Mensagem, mensagemEsperada);
+        }
+
         private List<Tarefa> ListaTarefasStub()
         {
             var lista = new List<Tarefa>()
