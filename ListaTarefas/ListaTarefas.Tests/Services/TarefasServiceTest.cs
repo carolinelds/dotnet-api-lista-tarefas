@@ -95,7 +95,39 @@ namespace ListaTarefas.Tests.Services
 
             Assert.False(retorno.Sucesso);
             Assert.Equal(retorno.Mensagem, mensagemEsperada);
+        }
 
+        [Fact]
+        public void Quando_ChamadoEditarConcluido_Com_IdExistente_Deve_RetornarTarefaEditada()
+        {
+            var lista = ListaTarefasStub();
+
+            var request = new ConcluidoUpdateRequest()
+            {
+                Concluido = true
+            };
+
+            var retorno = _service.EditarConcluido(lista[0].IdTarefa, request);
+
+            Assert.Equal(retorno.ObjetoRetorno.Concluido, request.Concluido);
+        }
+
+        [Fact]
+        public void Quando_ChamadoEditarConcluido_Com_IdNaoExistente_Deve_RetornarErro()
+        {
+            var lista = ListaTarefasStub();
+
+            var mensagemEsperada = "Tarefa não encontrada!";
+
+            var request = new ConcluidoUpdateRequest()
+            {
+                Concluido = true
+            };
+
+            var retorno = _service.EditarConcluido(lista.Count + 1, request);
+
+            Assert.False(retorno.Sucesso);
+            Assert.Equal(retorno.Mensagem, mensagemEsperada);
         }
 
         private List<Tarefa> ListaTarefasStub()
