@@ -44,6 +44,11 @@ namespace ListaTarefas.Services
             {
                 model.Prioridade = 5;
             }
+            
+            if (model.Prioridade < 1 || model.Prioridade > 5)
+            {
+                return new ServiceResponse<Tarefa>("Prioridade deve ser de 1 a 5.");
+            }
 
             var novaTarefa = new Tarefa()
             {

@@ -62,6 +62,42 @@ namespace ListaTarefas.Tests.Services
             Assert.Equal(retorno.Mensagem, mensagemEsperada);
         }
 
+        [Fact]
+        public void Quando_PassadoTarefaValida_Deve_Cadastrar_E_RetornarTarefaCadastrada()
+        {
+            var request = new TarefaCreateRequest()
+            {
+                Titulo = "Tarefa Test",
+                Descricao = "Descricao Test",
+                Prioridade = 5
+            };
+
+            var retorno = _service.CadastrarNova(request);
+
+            Assert.Equal(retorno.ObjetoRetorno.Titulo, request.Titulo);
+            Assert.Equal(retorno.ObjetoRetorno.Descricao, request.Descricao);
+            Assert.Equal(retorno.ObjetoRetorno.Prioridade, request.Prioridade);
+        }
+
+        [Fact]
+        public void Quando_PassadoTarefaInvalida_Deve_RetornarErro()
+        {
+            var request = new TarefaCreateRequest()
+            {
+                Titulo = "Tarefa Test",
+                Descricao = "Descricao Test",
+                Prioridade = 10
+            };
+
+            var mensagemEsperada = "Prioridade deve ser de 1 a 5.";
+
+            var retorno = _service.CadastrarNova(request);
+
+            Assert.False(retorno.Sucesso);
+            Assert.Equal(retorno.Mensagem, mensagemEsperada);
+
+        }
+
         private List<Tarefa> ListaTarefasStub()
         {
             var lista = new List<Tarefa>()
