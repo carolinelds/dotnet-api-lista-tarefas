@@ -2,6 +2,7 @@
 using ListaTarefas.DAL;
 using ListaTarefas.Domain.DTO;
 using ListaTarefas.Services;
+using ListaTarefas.Services.Base;
 using ListaTarefas.Domain;
 using System;
 using Xunit;
@@ -9,7 +10,7 @@ using ListaTarefas.Domain.Entity;
 
 namespace ListaTarefas.Tests.Services
 {
-    public partial class TarefasServiceTest : IDisposable
+    public class TarefasServiceTest : IDisposable
     {
         private readonly AppDbContext _dbContext;
         private readonly TarefasService _service;
@@ -22,6 +23,43 @@ namespace ListaTarefas.Tests.Services
 
             _dbContext = new AppDbContext(options);
             _service = new TarefasService(_dbContext);
+        }
+
+        [Fact]
+        public void Quando_ChamadoListarTodos_Deve_RetornarTodos()
+        {
+            var lista = ListaTarefasStub();
+
+            var retorno = new List<Tarefa>(_service.ListarTodos());
+
+            Assert.Equal(retorno.Count, lista.Count());
+        }
+
+        [Fact]
+        public void Quando_ChamadoPesquisaPorId_Com_IdExistente_Deve_RetornarTarefa()
+        {
+            var lista = ListaTarefasStub();
+
+            var retorno = _service.PesquisarPorId(lista[0].IdTarefa);
+
+            Assert.Equal(retorno.ObjetoRetorno.IdTarefa, lista[0].IdTarefa);
+            Assert.Equal(retorno.ObjetoRetorno.Titulo, lista[0].Titulo);
+            Assert.Equal(retorno.ObjetoRetorno.Descricao, lista[0].Descricao);
+            Assert.Equal(retorno.ObjetoRetorno.Concluido, lista[0].Concluido);
+            Assert.Equal(retorno.ObjetoRetorno.Prioridade, lista[0].Prioridade);
+        }
+
+        [Fact]
+        public void Quando_ChamadoPesquisaPorId_Com_IdNaoExistente_Deve_RetornarErro()
+        {
+            var lista = ListaTarefasStub();
+
+            var mensagemEsperada = "Tarefa não encontrada!";
+
+            var retorno = _service.PesquisarPorId(lista.Count + 1);
+
+            Assert.False(retorno.Sucesso);
+            Assert.Equal(retorno.Mensagem, mensagemEsperada);
         }
 
         private List<Tarefa> ListaTarefasStub()
