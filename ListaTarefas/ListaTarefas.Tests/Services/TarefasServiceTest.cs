@@ -163,6 +163,32 @@ namespace ListaTarefas.Tests.Services
             Assert.Equal(retorno.Mensagem, mensagemEsperada);
         }
 
+        [Fact]
+        public void Quando_ChamadoDeletar_Com_IdExistente_Deve_RetornarTarefasAtualizadas()
+        {
+            var lista = ListaTarefasStub();
+
+            var retorno = _service.Deletar(lista[0].IdTarefa);
+
+            Assert.True(retorno.Sucesso);
+            Assert.True(retorno.ObjetoRetorno);
+            Assert.Equal(_dbContext.Tarefas.Count(), lista.Count - 1);
+        }
+
+        [Fact]
+        public void Quando_ChamadoDeletar_Com_IdNaoExistente_Deve_RetornarErro()
+        {
+            var lista = ListaTarefasStub();
+
+            var mensagemEsperada = "Tarefa não encontrada!";
+
+            var retorno = _service.Deletar(lista.Count + 1);
+
+            Assert.False(retorno.Sucesso);
+            Assert.Equal(retorno.Mensagem, mensagemEsperada);
+            Assert.Equal(_dbContext.Tarefas.Count(), lista.Count);
+        }
+
         private List<Tarefa> ListaTarefasStub()
         {
             var lista = new List<Tarefa>()
